@@ -1,0 +1,2 @@
+Using WIFI_AP mode makes Matrix310 to be a access point.
+Source: https://randomnerdtutorials.com/esp32-useful-wi-fi-functions-arduino/

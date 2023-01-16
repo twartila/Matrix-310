@@ -1,0 +1,4 @@
+Enables reading and writing on SD cards.
+Once an SD memory card is connected to the SPI interface of the Matrix310 you can create files and read/write on them. You can also move through directories on the SD card.
+
+Source: https://www.arduino.cc/reference/en/libraries/sd/

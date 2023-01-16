@@ -1,0 +1,2 @@
+Using wifi to connect the internet.
+Source: https://randomnerdtutorials.com/esp32-useful-wi-fi-functions-arduino/
