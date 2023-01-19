@@ -33,9 +33,9 @@
 #define SW_4        35
 
 // RS-485
-#define COM1_RX     16//out
-#define COM1_TX     17//in
-#define COM1_RTS    4//request to send
+#define COM1_RX     16
+#define COM1_TX     17
+#define COM1_RTS    4
 
 // RS-232
 #define COM2_RX     33 

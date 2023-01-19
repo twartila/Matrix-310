@@ -11,8 +11,6 @@ appendFile
 renameFile
 deleteFile
 testFileIO
-
-test_sd
 */
 
 //The SD library allows for reading from and writing to SD cards, the library also include "FS.h" and "SPI.h".
@@ -35,8 +33,8 @@ void listDir(fs::FS &fs, const char * dirname, uint8_t levels){
     }
 
     File file = root.openNextFile();
-    while(file){//has next file
-        //Is a directory 
+    while(file){// has next file
+        // Is a directory 
         if(file.isDirectory()){
             Serial.print("  DIR : ");
             Serial.println(file.name());
@@ -44,7 +42,7 @@ void listDir(fs::FS &fs, const char * dirname, uint8_t levels){
                 listDir(fs, file.name(), levels -1);
             }
         }
-        //Is a file
+        // Is a file
         else {
             Serial.print("  FILE: ");
             Serial.print(file.name());
@@ -181,7 +179,7 @@ void testFileIO(fs::FS &fs, const char * path){
     file.close();
 }
 
-void test_sd(){
+void testSD(){
     if(!SD.begin(SD_CS, spi)){
         Serial.println("Card Mount Failed");
         return;
@@ -232,50 +230,22 @@ void test_sd(){
     Serial.printf("Used space: %lluMB\n", SD.usedBytes() / (1024 * 1024));
 }
 
-void setRreadyLed(int state){
-    if(state) { // LED ON
-        setLED(LED_READY, HIGH);
-    }
-    else { // LED OFF
-        setLED(LED_READY, LOW);
-    }
-}
-
-void setLED(int pin, int status){
-    digitalWrite(pin, status);
-}
-
-void initGPIO()
-{
-    pinMode(DO1, OUTPUT);
-    pinMode(DI1, INPUT);
-    pinMode(DI2, INPUT);
-    pinMode(SD_CS, OUTPUT);
-    pinMode(COM1_RTS, OUTPUT);
-    pinMode(LED_WIFI, OUTPUT);
-    pinMode(LED_READY, OUTPUT);
-    
-    pinMode(SW_1, INPUT);
-    pinMode(SW_2, INPUT);
-    pinMode(SW_4, INPUT);
-    
-    // make sure LED OFF, if possible
-    // setRreadyLed(1);
-    // digitalWrite(LED_WIFI, LOW);
-}
-
 void setup()
 {
-    initGPIO();
+    pinMode(SD_CS, OUTPUT);
+    pinMode(LED_READY, OUTPUT);
     Serial.begin(115200);
     while (!Serial);
     Serial.println("\n------------------------------");
     Serial.print("Initializing SD card...\n");
     spi.begin(SD_SCK, SD_MISO, SD_MOSI, SD_CS);//HSPI
-    
-    setRreadyLed(1);
-    test_sd();//sd card test
+    // you need to light up LED_READY first, otherwise the SDcard can't be mounted.
+    digitalWrite(LED_READY, HIGH);
+    // SDcard test
+    testSD();
 }
 
 
-void loop(void) {}
+void loop(void) {
+
+}
