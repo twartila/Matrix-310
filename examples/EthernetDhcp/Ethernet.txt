@@ -1,2 +1,2 @@
-Using ethernet lan to connect the internet.
+Using ethernet with dhcp to connect the internet.
 Source: https://www.arduino.cc/reference/en/libraries/ethernet/

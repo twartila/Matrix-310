@@ -2,9 +2,9 @@
 Use digitalRead() to read the value from a specified digital pin, either HIGH or LOW.
 
 DIO pin define:
-DO1->25 pin
-DI1->36 pin
-DI2->39 pin
+DO1->pin 25
+DI1->pin 35
+DI2->pin 39
 */
 #include "src/Artila-Matrix310.h"
 

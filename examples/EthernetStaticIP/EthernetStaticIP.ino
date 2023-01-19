@@ -1,42 +1,30 @@
+/*
+Using Ethernet.begin(mac, ip) with the proper network setup, the Ethernet shield will configure using static IP address instead of DHCP.
+https://www.arduino.cc/reference/en/libraries/ethernet/
+*/
 #include <Ethernet.h>
 #include "./src/Artila-Matrix310.h"
 
-// the MAC (Media access control) address for the device (array of 6 bytes). this is the Ethernet hardware address of your Matrix310.
-byte mac[] = { 0x98, 0xf4, 0xab, 0x17, 0x24, 0xc4 };
+// The MAC (Media access control) address for the device (array of 6 bytes). 
+// This is the Ethernet hardware address which is written on a sticker under your Matrix310.
+byte mac[] = { 0x98, 0xf4, 0xab, 0x17, 0x24, 0xc6 };
 // the IP address of the device (array of 4 bytes)
-IPAddress ip(0, 0, 0, 0);
+byte ip[] = {192, 168, 1, 125};
 
-void initGPIO() {
-  // Ethernet LAN chip select
-  Ethernet.init(LAN_CS);
-}
 void setup() {
 
-  initGPIO();
+  // Ethernet LAN chip select
+  Ethernet.init(LAN_CS); // pin 5
   Serial.begin(115200);
 
   // start the Ethernet connection:
-  Serial.println("Initialize Ethernet with DHCP:");
-  //Matrix310 tries connecting the internet with DHCP
-  if (Ethernet.begin(mac) == 0) {
-    //Fail to use DHCP
-    Serial.println("Failed to configure Ethernet using DHCP");
-    // Check for Ethernet hardware present
-    if (Ethernet.hardwareStatus() == EthernetNoHardware) {
-      Serial.println("Ethernet shield was not found.  Sorry, can't run without hardware. :(");
-      while (true) {
-        delay(1);  // do nothing, no point running without Ethernet hardware
-      }
-    }
-    if (Ethernet.linkStatus() == LinkOFF) {
-      Serial.println("Ethernet cable is not connected.");
-    }
-    // try to configure using IP address instead of DHCP:
-    Ethernet.begin(mac, ip);
-  } else {  //Matrix310 already connect to the internet
-    Serial.print("  DHCP assigned IP ");
-    Serial.println(Ethernet.localIP());
-  }
+  Serial.println("Initialize Ethernet with static IP:");
+  //Matrix310 tries connecting the internet with static ip
+  Ethernet.begin(mac, ip);
+  // Matrix-310 already connect to the internet
+  Serial.print("  Static IP ");
+  Serial.println(Ethernet.localIP());
+  
   // give the Ethernet shield a second to initialize:
   delay(1000);
 }

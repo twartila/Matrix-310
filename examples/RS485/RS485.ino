@@ -1,63 +1,109 @@
 /*
 Used for communication between the Matrix310 and a computer or other devices. 
-Matrix310 uses SERIAL2 PINS to achieve RS485 communication.
+Matrix310 can use SERIAL1 PINS or SERIAL2 PINS to achieve RS232 communication.
 */
 
-#include "./src/Artila-Matrix310.h"
+#include "src/Artila-Matrix310.h"
+#include "src/crc16.h"
+// int readLen = 0;
+u_int8_t writeMsg[] = { 0x02, 0x03, 0x00, 0x44, 0x00, 0x03, 0x00, 0x00 };  //8
+u_int8_t readBuf[11];
 int readLen = 0;
-String writeMsg = "Message";
-String readStr = "";
+void RS485Write() {
+  if (Serial2.availableForWrite() >= 8) {
+    unsigned short crc = do_crc_table(&writeMsg[0], sizeof(writeMsg) - 2);
+    Serial.print("CRC: ");
+    Serial.println(crc, HEX);
+    *(u_int16_t *)(&writeMsg[6]) = crc;
+    Serial.print("write: ");
+    for (int i = 0; i < sizeof(writeMsg); i++) {
+      Serial.print(*(byte *)(writeMsg + i), HEX);
+      Serial.print(" ");
+    }
+    Serial.println("");
+    int writeLen = Serial2.write((byte *)writeMsg, sizeof(writeMsg));
+    // delay(10);  //?送出去or到buf
+    Serial2.flush();
+
+    Serial.print("write length: ");
+    Serial.println(writeLen);
+  }
+}
+void RS485Read() {
+  // delay(100);
+  // if (Serial2.available() > 0) {
+  //   readLen = Serial2.readBytes(readBuf, sizeof(readBuf));
+  //   Serial2.flush();
+
+  //   // digitalWrite(COM1_RTS, HIGH); // write
+  //   // delay(1);
+  //   Serial.printf("readLen: %i", readLen);
+  //   if (readLen > 0) {
+  //     //Print the data from buffer.
+  //     Serial.printf("readBuf: %x\n", readBuf);
+  //     // Serial.println("");
+  //   }
+  // } 
+  // else {
+  //   Serial.println("nothing!");
+  // }
+
+  unsigned long RS485Timeout = millis();
+  // Time485 = millis();
+
+  while (1) {
+    if (Serial2.available()) {
+      readLen = Serial2.readBytes(readBuf, sizeof(readBuf));
+      Serial2.flush();
+      // delay(32);
+      
+      
+      Serial.print("read: ");
+      if (readLen > 0) {
+        for (int i = 0; i < readLen; i++)
+        {
+          Serial.print(*(byte *)(writeMsg + i), HEX);
+          Serial.print(" ");
+        }
+        Serail.println("");
+        Serial.print("read length: ");
+        Serial.println(readLen);
+      }
+      
+      break;
+    }
+    if (millis() - RS485Timeout > 2000) {
+      Serial.println("read nothing!");
+      break;
+    }
+  }
+}
 
 void setup() {
   Serial.begin(115200);
   Serial.setTimeout(100);
   //Setup Serial2 PINS with the specified baud rates that is depends on the device you connect.
-  Serial2.begin(115200);
-  Serial2.setTimeout(100);
+  Serial2.begin(9600);
+  // Serial2.setTimeout(100);
   //Configures the COM1_RTS pin to behave as an output.
   pinMode(COM1_RTS, OUTPUT);
-  //Write a HIGH value to COM1_RTS pin before the Matrix310 uses the Serial2 PINS to send/write data.
-  //Write a LOW value to COM1_RTS pin before the Matrix310 uses the Serial2 PINS to receive/read data.
-  digitalWrite(COM1_RTS, HIGH);
-  delay(0.01);
   Serial.println("RS485 already setup.");
 }
 
 void loop() {
-  int writeLen = Serial2.print(writeMsg);
-  Serial2.flush();
-  delay(32);
-  Serial.print("data send: ");
-  Serial.println(writeLen);
-
-  digitalWrite(COM1_RTS, LOW);  // read
-  delay(0.01);
-
-  unsigned long Time485;
-  Time485 = millis();
-
-  while (1) {
-    if (Serial2.available()) {
-      readStr = Serial2.readString();
-      Serial2.flush();
-      delay(32);
-      readLen = readStr.length()-2;
-      Serial.printf("data receive: %i\n", readLen);
-      Serial.printf("read: %s\n", readStr);
-      
-      break;
-    }
-    if (millis() - Time485 > 5000) {
-      Serial.println("read nothing!");
-      break;
-    }
-  }
+  //Write a HIGH value to COM1_RTS pin before the Matrix310 uses the Serial2 PINS to send/write data.
+  //Write a LOW value to COM1_RTS pin before the Matrix310 uses the Serial2 PINS to receive/read data.
   digitalWrite(COM1_RTS, HIGH);  // write
-  delay(0.01);
+  delay(1);
+  RS485Write();
+  digitalWrite(COM1_RTS, LOW);  // read
+  delay(1);
+  RS485Read();
+
+
+
   Serial.println("");
   Serial.println("do it again~");
   Serial.println("");
   delay(3000);
 }
-
-

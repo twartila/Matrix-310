@@ -1,6 +1,7 @@
 /*
 Using Ethernet.begin(mac) with the proper network setup, the Ethernet shield will automatically obtain an IP address.
 To make sure the DHCP lease is properly renewed when needed, be sure to call Ethernet.maintain() regularly.
+https://www.arduino.cc/reference/en/libraries/ethernet/
 */
 #include <Ethernet.h>
 #include "./src/Artila-Matrix310.h"
@@ -11,7 +12,7 @@ byte mac[] = { 0x98, 0xf4, 0xab, 0x17, 0x24, 0xc4 };
 
 void setup() {
   // Ethernet LAN chip select
-  Ethernet.init(LAN_CS);
+  Ethernet.init(LAN_CS); // pin 5
   Serial.begin(115200);
 
   // start the Ethernet connection:
