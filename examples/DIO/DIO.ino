@@ -19,15 +19,10 @@ void readDI(){
     Serial.println((String)"DI2: " + di2_status);
 }
 
-void initGPIO()
-{
+void setup() {
     pinMode(DO1, OUTPUT);
     pinMode(DI1, INPUT);
     pinMode(DI2, INPUT);
-}
-
-void setup() {
-    initGPIO();
     Serial.begin(115200);    
     readDI();
 }

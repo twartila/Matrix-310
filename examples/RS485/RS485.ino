@@ -5,8 +5,7 @@ Matrix310 can use SERIAL1 PINS or SERIAL2 PINS to achieve RS232 communication.
 
 #include "src/Artila-Matrix310.h"
 #include "src/crc16.h"
-// int readLen = 0;
-u_int8_t writeMsg[] = { 0x02, 0x03, 0x00, 0x44, 0x00, 0x03, 0x00, 0x00 };  //8
+u_int8_t writeMsg[] = { 0x02, 0x03, 0x00, 0x44, 0x00, 0x03, 0x00, 0x00 };
 u_int8_t readBuf[11];
 int readLen = 0;
 void RS485Write() {
@@ -22,42 +21,17 @@ void RS485Write() {
     }
     Serial.println("");
     int writeLen = Serial2.write((byte *)writeMsg, sizeof(writeMsg));
-    // delay(10);  //?送出去or到buf
     Serial2.flush();
-
     Serial.print("write length: ");
     Serial.println(writeLen);
   }
 }
 void RS485Read() {
-  // delay(100);
-  // if (Serial2.available() > 0) {
-  //   readLen = Serial2.readBytes(readBuf, sizeof(readBuf));
-  //   Serial2.flush();
-
-  //   // digitalWrite(COM1_RTS, HIGH); // write
-  //   // delay(1);
-  //   Serial.printf("readLen: %i", readLen);
-  //   if (readLen > 0) {
-  //     //Print the data from buffer.
-  //     Serial.printf("readBuf: %x\n", readBuf);
-  //     // Serial.println("");
-  //   }
-  // } 
-  // else {
-  //   Serial.println("nothing!");
-  // }
-
   unsigned long RS485Timeout = millis();
-  // Time485 = millis();
-
   while (1) {
     if (Serial2.available()) {
       readLen = Serial2.readBytes(readBuf, sizeof(readBuf));
       Serial2.flush();
-      // delay(32);
-      
-      
       Serial.print("read: ");
       if (readLen > 0) {
         for (int i = 0; i < readLen; i++)
@@ -65,13 +39,14 @@ void RS485Read() {
           Serial.print(*(byte *)(writeMsg + i), HEX);
           Serial.print(" ");
         }
-        Serail.println("");
+        Serial.println("");
         Serial.print("read length: ");
         Serial.println(readLen);
       }
       
       break;
     }
+    // set RS485 timeout for 2 seconds
     if (millis() - RS485Timeout > 2000) {
       Serial.println("read nothing!");
       break;
@@ -82,9 +57,8 @@ void RS485Read() {
 void setup() {
   Serial.begin(115200);
   Serial.setTimeout(100);
-  //Setup Serial2 PINS with the specified baud rates that is depends on the device you connect.
+  // Setup Serial2 PINS with the specified baud rates that is depends on the device you connect.
   Serial2.begin(9600);
-  // Serial2.setTimeout(100);
   //Configures the COM1_RTS pin to behave as an output.
   pinMode(COM1_RTS, OUTPUT);
   Serial.println("RS485 already setup.");
@@ -100,9 +74,6 @@ void loop() {
   delay(1);
   RS485Read();
 
-
-
-  Serial.println("");
   Serial.println("do it again~");
   Serial.println("");
   delay(3000);
