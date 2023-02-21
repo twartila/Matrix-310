@@ -36,7 +36,7 @@ void RS485Read() {
       if (readLen > 0) {
         for (int i = 0; i < readLen; i++)
         {
-          Serial.print(*(byte *)(writeMsg + i), HEX);
+          Serial.print(*(byte *)(readBuf + i), HEX);
           Serial.print(" ");
         }
         Serial.println("");
