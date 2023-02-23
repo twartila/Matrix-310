@@ -6,7 +6,10 @@
 
 # Ignore build folder
 /build
- 
+
+# cache dir
+.cache/
+
 # Ignore files built by Visual Studio/Visual Micro
 [Dd]ebug/
 [Rr]elease/
@@ -16,6 +19,7 @@ __vm/
 .vscode/
 platform.sloeber.txt
 boards.sloeber.txt
+.devcontainer/
 
 # Ignore docs build (Sphinx)
 docs/build
@@ -29,4 +33,13 @@ debug.cfg
 debug.svd
 debug_custom.json
 
+# Components Unit Test Apps files
+sdkconfig
+sdkconfig.*
+
+# lock files for examples and components
+dependencies.lock
+
 # Another file
+Makefile
+example_test.py
