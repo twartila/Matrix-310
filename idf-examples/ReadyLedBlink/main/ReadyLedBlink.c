@@ -12,6 +12,7 @@
 #include <driver/gpio.h>
 #include "include/Artila-Matrix310.h"
 
+#define CONFIG_BLINK_PERIOD 2000
 static const char *TAG = "ReadyLED blink example: ";
 
 /* Use project configuration menu (idf.py menuconfig) to choose the GPIO to blink,
