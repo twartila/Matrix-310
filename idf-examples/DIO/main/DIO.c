@@ -12,13 +12,8 @@
 #define DO_PIN_SEL (1ULL<<DO1)
 #define DELAY_TIME 2000
 static const char *TAG = "DIO example: ";
-
-/* Use project configuration menu (idf.py menuconfig) to choose the GPIO to blink,
-   or you can edit the following line and set a number here.
-*/
 static uint8_t state = 0;
 
-// #ifdef LED_READY
 static void setDO(void)
 {
     /* Set the GPIO level according to the state (LOW or HIGH)*/
@@ -47,20 +42,31 @@ static void configure_dio(void)
     io_conf.pull_up_en = 1;
     gpio_config(&io_conf);
 }
+/*
+static void configure_dio_simply(void){
+    gpio_reset_pin(DO1);
+    /* Set the GPIO as a push/pull output */
+    gpio_set_direction(DO1, GPIO_MODE_OUTPUT);
+    gpio_reset_pin(DI1);
+    /* Set the GPIO as a push/pull input */
+    gpio_set_direction(DI1, GPIO_MODE_INPUT);
+    gpio_reset_pin(DI2);
+    /* Set the GPIO as a push/pull input */
+    gpio_set_direction(DI2, GPIO_MODE_INPUT);
+}
+*/
 
-// #endif
+
 void app_main(void)
 {
     static uint8_t DI1_state = 0;
     static uint8_t DI2_state = 0;
-    /* Configure the peripheral according to the LED type */
+    /* Configure DIO */
     configure_dio();
     while (1) {
-        // ESP_LOGI(TAG, "Turning the LED %s!", s_led_state == true ? "ON" : "OFF");
         printf("Set DO1 %s!\r\n", state == 0 ? "HIGH" : "LOW");
         setDO();
-        printf("DO1: %d\r\n", gpio_get_level(DO1));
-        /* Toggle the LED state */
+        /* Toggle the DO1 state */
         state = !state;
         DI1_state = gpio_get_level(DI1);
         DI2_state = gpio_get_level(DI2);
