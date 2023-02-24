@@ -5,7 +5,7 @@
 *~
 
 # Ignore build folder
-/build
+**/build
 
 # cache dir
 .cache/
@@ -27,6 +27,10 @@ docs/source/_build
 __pycache__/
 _build/
 
+#componect in main
+**/component.mk
+**/Kconfig.projbuild
+
 # Test log files
 *.log
 debug.cfg
@@ -41,5 +45,5 @@ sdkconfig.*
 dependencies.lock
 
 # Another file
-Makefile
-example_test.py
+**/Makefile
+**/example_test.py
