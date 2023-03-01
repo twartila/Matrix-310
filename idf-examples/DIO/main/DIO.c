@@ -42,7 +42,7 @@ static void configure_dio(void)
     io_conf.pull_up_en = 1;
     gpio_config(&io_conf);
 }
-/*
+
 static void configure_dio_simply(void){
     gpio_reset_pin(DO1);
     /* Set the GPIO as a push/pull output */
@@ -54,7 +54,7 @@ static void configure_dio_simply(void){
     /* Set the GPIO as a push/pull input */
     gpio_set_direction(DI2, GPIO_MODE_INPUT);
 }
-*/
+
 
 
 void app_main(void)
