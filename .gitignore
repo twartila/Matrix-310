@@ -38,7 +38,7 @@ debug.svd
 debug_custom.json
 
 # Components Unit Test Apps files
-sdkconfig.*
+sdkconfig.old
 
 # lock files for examples and components
 dependencies.lock
