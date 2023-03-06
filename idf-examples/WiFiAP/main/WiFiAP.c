@@ -22,10 +22,12 @@
 
    If you'd rather not, just change the below entries to strings with
    the config you want - ie #define EXAMPLE_WIFI_SSID "mywifissid"
+
+   Please consult local 2.4 GHz RF operating regulations before configuring WiFi channel.
 */
 #define EXAMPLE_ESP_WIFI_SSID      "Matrix-310"
 #define EXAMPLE_ESP_WIFI_PASS      "00000000"
-#define EXAMPLE_ESP_WIFI_CHANNEL   8
+#define EXAMPLE_ESP_WIFI_CHANNEL   1
 #define EXAMPLE_MAX_STA_CONN       1
 
 static const char *TAG = "wifi softAP";
