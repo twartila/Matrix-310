@@ -55,8 +55,6 @@ static void configure_dio_simply(void){
     gpio_set_direction(DI2, GPIO_MODE_INPUT);
 }
 
-
-
 void app_main(void)
 {
     static uint8_t DI1_state = 0;

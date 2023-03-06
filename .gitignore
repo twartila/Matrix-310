@@ -29,7 +29,6 @@ _build/
 
 #componect in main
 **/component.mk
-**/Kconfig.projbuild
 
 # Test log files
 *.log

@@ -28,7 +28,7 @@
 #define EXAMPLE_ESP_WIFI_SSID      "Matrix-310"
 #define EXAMPLE_ESP_WIFI_PASS      "00000000"
 #define EXAMPLE_ESP_WIFI_CHANNEL   1
-#define EXAMPLE_MAX_STA_CONN       1
+#define EXAMPLE_MAX_STA_CONN       4
 
 static const char *TAG = "wifi softAP";
 
