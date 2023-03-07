@@ -32,12 +32,13 @@ _build/
 
 # Test log files
 *.log
-debug.cfg
-debug.svd
+*.cfg
+*.svd
 debug_custom.json
 
 # Components Unit Test Apps files
 sdkconfig.old
+sdkconfig.ci
 
 # lock files for examples and components
 dependencies.lock
