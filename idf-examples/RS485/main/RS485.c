@@ -101,15 +101,17 @@ static void echo_task(void *arg)
     // Allocate buffers for UART
     uint8_t *data = (uint8_t *)malloc(sizeof(uint8_t) * BUF_SIZE);
     uint8_t writeModbus[] = {0x02, 0x03, 0x00, 0x44, 0x00, 0x03, 0x00, 0x00};
+    // Generate CRC with Little Endian
     unsigned short crc = do_crc(&writeModbus[0], sizeof(writeModbus) - 2);
     ESP_LOGI(TAG, "UART start recieve loop.\r\n");
     printf("Start RS485 UART test\n");
-
     printf("CRC: 0x%.2X\n", swap_uint16(crc));
+    // Assigned CRC to the last two byte with Littte Endian
     *(u_int16_t *)(&writeModbus[0] + (sizeof(writeModbus) - 2)) = crc;
-
+    
     while (1)
     {
+        // Write data to UART
         ESP_LOGI(TAG, "Writed %u bytes:", sizeof(writeModbus));
         printf("[ ");
         for (int i = 0; i < sizeof(writeModbus); i++)
@@ -120,8 +122,6 @@ static void echo_task(void *arg)
         printf("] \n");
         // Read data from UART
         int len = uart_read_bytes(uart_num, data, BUF_SIZE, PACKET_READ_TICS);
-        
-        // Write data back to UART
         if (len > 0)
         {
             ESP_LOGI(TAG, "Received %u bytes:", len);
@@ -134,7 +134,7 @@ static void echo_task(void *arg)
         }
         else
         {
-            // ESP_ERROR_CHECK(uart_wait_tx_done(uart_num, 10));
+            ESP_ERROR_CHECK(uart_wait_tx_done(uart_num, 10));
             printf("read nothing!\n");
         }
         vTaskDelay(3000 / portTICK_PERIOD_MS);
