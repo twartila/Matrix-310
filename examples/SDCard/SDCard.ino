@@ -20,7 +20,7 @@ testFileIO
 SPIClass spi = SPIClass();
 
 void listDir(fs::FS &fs, const char * dirname, uint8_t levels){
-    Serial.printf("Listing directory: %s\r\n", dirname);
+    Serial.printf("Listing directory: %s\n", dirname);
 
     File root = fs.open(dirname);
     if(!root){
@@ -54,25 +54,25 @@ void listDir(fs::FS &fs, const char * dirname, uint8_t levels){
 }
 
 void createDir(fs::FS &fs, const char * path){
-    Serial.printf("\r\nCreating Dir\r\n: %s", path);
+    Serial.printf("\nCreating Dir\n: %s", path);
     if(fs.mkdir(path)){
-        Serial.println("Dir created\r\n");
+        Serial.println("Dir created\n");
     } else {
         Serial.println("mkdir failed");
     }
 }
 
 void removeDir(fs::FS &fs, const char * path){
-    Serial.printf("Removing Dir: %s\r\n", path);
+    Serial.printf("Removing Dir: %s\n", path);
     if(fs.rmdir(path)){
-        Serial.println("Dir removed\r\n");
+        Serial.println("Dir removed\n");
     } else {
         Serial.println("rmdir failed");
     }
 }
 
 void readFile(fs::FS &fs, const char * path){
-    Serial.printf("Reading file: %s\r\n", path);
+    Serial.printf("Reading file: %s\n", path);
 
     File file = fs.open(path);
     if(!file){
@@ -88,7 +88,7 @@ void readFile(fs::FS &fs, const char * path){
 }
 
 void writeFile(fs::FS &fs, const char * path, const char * message){
-    Serial.printf("Writing file: %s\r\n", path);
+    Serial.printf("Writing file: %s\n", path);
 
     File file = fs.open(path, FILE_WRITE);//File write
     if(!file){
@@ -96,7 +96,7 @@ void writeFile(fs::FS &fs, const char * path, const char * message){
         return;
     }
     if(file.print(message)){
-        Serial.println("File written\r\n");
+        Serial.println("File written\n");
     } else {
         Serial.println("Write failed");
     }
@@ -104,7 +104,7 @@ void writeFile(fs::FS &fs, const char * path, const char * message){
 }
 
 void appendFile(fs::FS &fs, const char * path, const char * message){
-    Serial.printf("Appending to file: %s\r\n", path);
+    Serial.printf("Appending to file: %s\n", path);
 
     File file = fs.open(path, FILE_APPEND);//File append
     if(!file){
@@ -112,7 +112,7 @@ void appendFile(fs::FS &fs, const char * path, const char * message){
         return;
     }
     if(file.print(message)){
-        Serial.println("Message appended\r\n");
+        Serial.println("Message appended\n");
     } else {
         Serial.println("Append failed");
     }
@@ -120,18 +120,18 @@ void appendFile(fs::FS &fs, const char * path, const char * message){
 }
 
 void renameFile(fs::FS &fs, const char * path1, const char * path2){
-    Serial.printf("Renaming file %s to %s\r\n", path1, path2);
+    Serial.printf("Renaming file %s to %s\n", path1, path2);
     if (fs.rename(path1, path2)) {
-        Serial.println("File renamed\r\n");
+        Serial.println("File renamed\n");
     } else {
         Serial.println("Rename failed");
     }
 }
 
 void deleteFile(fs::FS &fs, const char * path){
-    Serial.printf("Deleting file: %s\r\n", path);
+    Serial.printf("Deleting file: %s\n", path);
     if(fs.remove(path)){
-        Serial.println("File deleted\r\n");
+        Serial.println("File deleted\n");
     } else {
         Serial.println("Delete failed");
     }
@@ -156,7 +156,7 @@ void testFileIO(fs::FS &fs, const char * path){
             len -= toRead;
         }
         end = millis() - start;
-        Serial.printf("%u bytes read for %u ms\r\n", flen, end);
+        Serial.printf("%u bytes read for %u ms\n", flen, end);
         file.close();
     } else {
         Serial.println("Failed to open file for reading");
@@ -175,7 +175,7 @@ void testFileIO(fs::FS &fs, const char * path){
         file.write(buf, 512);
     }
     end = millis() - start;
-    Serial.printf("%u bytes written for %u ms\r\n", 2048 * 512, end);
+    Serial.printf("%u bytes written for %u ms\n", 2048 * 512, end);
     file.close();
 }
 
@@ -203,31 +203,31 @@ void testSD(){
     }
     //Show SD card size
     uint64_t cardSize = SD.cardSize() / (1024 * 1024);
-    Serial.printf("SD Card Size: %lluMB\r\n", cardSize);
-    Serial.println("\r\n------------------------------");
+    Serial.printf("SD Card Size: %lluMB\n", cardSize);
+    Serial.println("\n------------------------------");
     //Create directory
     listDir(SD, "/", 0);
     createDir(SD, "/mydir");
     listDir(SD, "/", 0);
-    Serial.println("\r\n------------------------------");
+    Serial.println("\n------------------------------");
     //Remove directory
     removeDir(SD, "/mydir");
     listDir(SD, "/", 2);
-    Serial.println("\r\n------------------------------");
+    Serial.println("\n------------------------------");
     //Write and read file
     writeFile(SD, "/hello.txt", "Hello ");//Overwrite a file
     appendFile(SD, "/hello.txt", "World!\n");//Append to a file instead of overwriting
     readFile(SD, "/hello.txt");
-    Serial.println("\r\n------------------------------");
+    Serial.println("\n------------------------------");
     //Delete and rename a file
     deleteFile(SD, "/foo.txt");
     renameFile(SD, "/hello.txt", "/foo.txt");
     readFile(SD, "/foo.txt");
-    Serial.println("\r\n------------------------------");
+    Serial.println("\n------------------------------");
     //Test file IO
     testFileIO(SD, "/test.txt");
-    Serial.printf("Total space: %lluMB\r\n", SD.totalBytes() / (1024 * 1024));
-    Serial.printf("Used space: %lluMB\r\n", SD.usedBytes() / (1024 * 1024));
+    Serial.printf("Total space: %lluMB\n", SD.totalBytes() / (1024 * 1024));
+    Serial.printf("Used space: %lluMB\n", SD.usedBytes() / (1024 * 1024));
 }
 
 void setup()
@@ -239,8 +239,9 @@ void setup()
     // You need to light up LED_READY first, otherwise the SDcard can't be mounted.
     digitalWrite(LED_READY, HIGH);
     Serial.println("Turning the LED_READY ON");
-    Serial.println("\r\n------------------------------");
-    Serial.print("Initializing SD card...\r\n");
+    delay(1000);
+    Serial.println("\n------------------------------");
+    Serial.print("Initializing SD card...\n");
     spi.begin(SD_SCK, SD_MISO, SD_MOSI, SD_CS);//HSPI
     // SDcard test
     testSD();
