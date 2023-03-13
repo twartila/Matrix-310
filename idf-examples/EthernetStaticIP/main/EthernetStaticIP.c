@@ -16,6 +16,8 @@
 #include "esp_log.h"
 #include "driver/gpio.h"
 #include "sdkconfig.h"
+#include "lwip/ip4_addr.h"
+
 #if CONFIG_ETH_USE_SPI_ETHERNET
 #include "driver/spi_master.h"
 #endif // CONFIG_ETH_USE_SPI_ETHERNET
@@ -69,19 +71,45 @@ static void eth_event_handler(void *arg, esp_event_base_t event_base,
 }
 
 /** Event handler for IP_EVENT_ETH_GOT_IP */
+// static void got_ip_event_handler(void *arg, esp_event_base_t event_base,
+//                                  int32_t event_id, void *event_data)
+// {
+//     ip_event_got_ip_t *event = (ip_event_got_ip_t *) event_data;
+//     const esp_netif_ip_info_t *ip_info = &event->ip_info;
+
+//     ESP_LOGI(TAG, "Ethernet Got IP Address");
+//     ESP_LOGI(TAG, "~~~~~~~~~~~");
+//     ESP_LOGI(TAG, "ETHIP:" IPSTR, IP2STR(&ip_info->ip));
+//     ESP_LOGI(TAG, "ETHMASK:" IPSTR, IP2STR(&ip_info->netmask));
+//     ESP_LOGI(TAG, "ETHGW:" IPSTR, IP2STR(&ip_info->gw));
+//     ESP_LOGI(TAG, "~~~~~~~~~~~");
+// }
+/** Event handler for IP_EVENT_ETH_GOT_IP */
 static void got_ip_event_handler(void *arg, esp_event_base_t event_base,
                                  int32_t event_id, void *event_data)
 {
-    ip_event_got_ip_t *event = (ip_event_got_ip_t *) event_data;
-    const esp_netif_ip_info_t *ip_info = &event->ip_info;
+    esp_netif_t *netif = (esp_netif_t *) event_data;
+    esp_netif_ip_info_t *ip_info = malloc(sizeof(esp_netif_ip_info_t));
+    esp_netif_get_ip_info(netif, ip_info);  
+
+
+    // Set static IP address
+    esp_netif_dhcpc_stop(netif);
+    esp_netif_ip_info_t static_ip_info;
+    memset(&static_ip_info, 0, sizeof(static_ip_info));
+    IP4_ADDR(&static_ip_info.ip, 192, 168, 1, 100); // set the IP address
+    IP4_ADDR(&static_ip_info.netmask, 255, 255, 255, 0); // set the netmask
+    IP4_ADDR(&static_ip_info.gw, 192, 168, 1, 1); // set the gateway
+    esp_netif_set_ip_info(netif, &static_ip_info);
 
     ESP_LOGI(TAG, "Ethernet Got IP Address");
     ESP_LOGI(TAG, "~~~~~~~~~~~");
-    ESP_LOGI(TAG, "ETHIP:" IPSTR, IP2STR(&ip_info->ip));
-    ESP_LOGI(TAG, "ETHMASK:" IPSTR, IP2STR(&ip_info->netmask));
-    ESP_LOGI(TAG, "ETHGW:" IPSTR, IP2STR(&ip_info->gw));
+    ESP_LOGI(TAG, "ETHIP:" IPSTR, IP2STR(&static_ip_info.ip));
+    ESP_LOGI(TAG, "ETHMASK:" IPSTR, IP2STR(&static_ip_info.netmask));
+    ESP_LOGI(TAG, "ETHGW:" IPSTR, IP2STR(&static_ip_info.gw));
     ESP_LOGI(TAG, "~~~~~~~~~~~");
 }
+
 
 void app_main(void)
 {
