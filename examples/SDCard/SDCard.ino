@@ -242,7 +242,9 @@ void setup()
     delay(1000);
     Serial.println("\n------------------------------");
     Serial.print("Initializing SD card...\n");
-    spi.begin(SD_SCK, SD_MISO, SD_MOSI, SD_CS);//HSPI
+    // HSPI pins:
+    // SD_MISO: 12; SD_MOSI: 13; SD_SCK: 14; SD_CS: 15
+    spi.begin(SD_SCK, SD_MISO, SD_MOSI, SD_CS);
     // SDcard test
     testSD();
 }

@@ -16,9 +16,8 @@
 #include "esp_log.h"
 #include "driver/gpio.h"
 #include "sdkconfig.h"
-#if CONFIG_ETH_USE_SPI_ETHERNET
 #include "driver/spi_master.h"
-#endif // CONFIG_ETH_USE_SPI_ETHERNET
+#include "include/Artila-Matrix310.h"
 
 static const char *TAG = "eth_example";
 

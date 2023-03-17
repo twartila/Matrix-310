@@ -17,36 +17,14 @@
 #include "driver/gpio.h"
 #include "sdkconfig.h"
 #include "lwip/ip_addr.h"
-// #define CONFIG_EXAMPLE_STATIC_IP_ADDR "192.168.1.123"
-// #define CONFIG_EXAMPLE_STATIC_NETMASK_ADDR "255.255.255.0"
-// #define CONFIG_EXAMPLE_STATIC_GW_ADDR "192.168.1.1"
-// #define EXAMPLE_MAIN_DNS_SERVER CONFIG_EXAMPLE_STATIC_GW_ADDR
-// #define EXAMPLE_BACKUP_DNS_SERVER "0.0.0.0"
-
-#if CONFIG_ETH_USE_SPI_ETHERNET
+#include "include/Artila-Matrix310.h"
 #include "driver/spi_master.h"
-#endif // CONFIG_ETH_USE_SPI_ETHERNET
+
+#define CONFIG_EXAMPLE_USE_SPI_ETHERNET 1
+#define CONFIG_EXAMPLE_USE_W5500 1
 
 static const char *TAG = "eth_example";
 
-#if CONFIG_EXAMPLE_USE_SPI_ETHERNET
-#define INIT_SPI_ETH_MODULE_CONFIG(eth_module_config, num)                                  \
-    do                                                                                      \
-    {                                                                                       \
-        eth_module_config[num].spi_cs_gpio = CONFIG_EXAMPLE_ETH_SPI_CS##num##_GPIO;         \
-        eth_module_config[num].int_gpio = CONFIG_EXAMPLE_ETH_SPI_INT##num##_GPIO;           \
-        eth_module_config[num].phy_reset_gpio = CONFIG_EXAMPLE_ETH_SPI_PHY_RST##num##_GPIO; \
-        eth_module_config[num].phy_addr = CONFIG_EXAMPLE_ETH_SPI_PHY_ADDR##num;             \
-    } while (0)
-
-typedef struct
-{
-    uint8_t spi_cs_gpio;
-    uint8_t int_gpio;
-    int8_t phy_reset_gpio;
-    uint8_t phy_addr;
-} spi_eth_module_config_t;
-#endif
 
 /** Event handler for Ethernet events */
 static void eth_event_handler(void *arg, esp_event_base_t event_base,
@@ -128,20 +106,14 @@ void app_main(void)
     // Init SPI bus
     spi_device_handle_t spi_handle = {NULL};
     spi_bus_config_t buscfg = {
-        .miso_io_num = CONFIG_EXAMPLE_ETH_SPI_MISO_GPIO,
-        .mosi_io_num = CONFIG_EXAMPLE_ETH_SPI_MOSI_GPIO,
-        .sclk_io_num = CONFIG_EXAMPLE_ETH_SPI_SCLK_GPIO,
+        .miso_io_num = LAN_MISO,
+        .mosi_io_num = LAN_MOSI,
+        .sclk_io_num = LAN_SCLK,
         .quadwp_io_num = -1,
         .quadhd_io_num = -1,
     };
     ESP_ERROR_CHECK(spi_bus_initialize(CONFIG_EXAMPLE_ETH_SPI_HOST, &buscfg, SPI_DMA_CH_AUTO));
 
-    // Init specific SPI Ethernet module configuration from Kconfig (CS GPIO, Interrupt GPIO, etc.)
-    spi_eth_module_config_t *spi_eth_module_config = malloc(sizeof(spi_eth_module_config_t));
-    INIT_SPI_ETH_MODULE_CONFIG(spi_eth_module_config, 0);
-#if CONFIG_EXAMPLE_SPI_ETHERNETS_NUM > 1
-    INIT_SPI_ETH_MODULE_CONFIG(spi_eth_module_config, 1);
-#endif
 
     // Configure SPI interface and Ethernet driver for specific SPI module
     esp_eth_mac_t *mac_spi = malloc(sizeof(esp_eth_mac_t));
@@ -157,16 +129,16 @@ void app_main(void)
         .queue_size = 20};
 
     // Set SPI module Chip Select GPIO
-    devcfg.spics_io_num = spi_eth_module_config->spi_cs_gpio;
+    devcfg.spics_io_num = LAN_CS;
 
     ESP_ERROR_CHECK(spi_bus_add_device(CONFIG_EXAMPLE_ETH_SPI_HOST, &devcfg, &spi_handle));
     // w5500 ethernet driver is based on spi driver
     eth_w5500_config_t w5500_config = ETH_W5500_DEFAULT_CONFIG(spi_handle);
 
     // Set remaining GPIO numbers and configuration used by the SPI module
-    w5500_config.int_gpio_num = spi_eth_module_config->int_gpio;
-    phy_config_spi.phy_addr = spi_eth_module_config->phy_addr;
-    phy_config_spi.reset_gpio_num = spi_eth_module_config->phy_reset_gpio;
+    // w5500_config.int_gpio_num = LAN_INT;
+    phy_config_spi.phy_addr = LAN_PHY_ADDR;
+    phy_config_spi.reset_gpio_num = LAN_PHY_RST;
 
     mac_spi = esp_eth_mac_new_w5500(&w5500_config, &mac_config_spi);
     phy_spi = esp_eth_phy_new_w5500(&phy_config_spi);
@@ -194,6 +166,7 @@ void app_main(void)
     ESP_ERROR_CHECK(esp_eth_start(eth_handle_spi));
 
 #endif // CONFIG_EXAMPLE_USE_SPI_ETHERNET
+    // Set Static IP
     esp_netif_dhcpc_stop(eth_netif_spi);
     esp_netif_ip_info_t static_ip_info;
     memset(&static_ip_info, 0, sizeof(static_ip_info));

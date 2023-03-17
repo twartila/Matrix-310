@@ -5,15 +5,16 @@
 #include <driver/gpio.h>
 #include "include/Artila-Matrix310.h"
 
-// #define DO1 25
-// #define DI1 35
-// #define DI2 39
 #define DI_PIN_SEL ((1ULL<<DI1) | (1ULL<<DI2))
 #define DO_PIN_SEL (1ULL<<DO1)
 #define DELAY_TIME 2000
 static const char *TAG = "DIO example: ";
 static uint8_t state = 0;
-
+/*
+DO1: pin25
+DI1: pin36
+DI2: pin39
+*/
 static void setDO(void)
 {
     /* Set the GPIO level according to the state (LOW or HIGH)*/
@@ -22,7 +23,7 @@ static void setDO(void)
 
 static void configure_dio(void)
 {
-    printf("%sConfigured DIO!\r\n", TAG);
+    printf("\n%s\nConfigured DIO!\n", TAG);
     gpio_config_t io_conf;
     io_conf.intr_type = GPIO_INTR_DISABLE;
     io_conf.mode = GPIO_MODE_OUTPUT;
@@ -59,17 +60,19 @@ void app_main(void)
 {
     static uint8_t DI1_state = 0;
     static uint8_t DI2_state = 0;
-    /* Configure DIO */
-    configure_dio();
+    /* Configure DI/DO
+    Both methods can work*/
+    configure_dio(); // detailed settings
+    // configure_dio_simply(); // simple setting
     while (1) {
-        printf("Set DO1 %s!\r\n", state == 0 ? "HIGH" : "LOW");
+        printf("Set DO1 %s!\n", state == 0 ? "HIGH" : "LOW");
         setDO();
         /* Toggle the DO1 state */
         state = !state;
         DI1_state = gpio_get_level(DI1);
         DI2_state = gpio_get_level(DI2);
         
-        printf("DI1: %d\r\nDI2: %d\r\n", DI1_state, DI2_state);
+        printf("DI1: %d\nDI2: %d\n", DI1_state, DI2_state);
         vTaskDelay(DELAY_TIME / portTICK_PERIOD_MS);
     }
 }
