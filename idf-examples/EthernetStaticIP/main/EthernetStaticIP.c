@@ -6,6 +6,7 @@
    software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
    CONDITIONS OF ANY KIND, either express or implied.
 */
+// #define CONFIG_ETH_SPI_ETHERNET_W5500 1
 #include <stdio.h>
 #include <string.h>
 #include "freertos/FreeRTOS.h"
@@ -17,14 +18,13 @@
 #include "driver/gpio.h"
 #include "sdkconfig.h"
 #include "lwip/ip_addr.h"
-#include "include/Artila-Matrix310.h"
 #include "driver/spi_master.h"
+#include "include/Artila-Matrix310.h"
 
 #define CONFIG_EXAMPLE_USE_SPI_ETHERNET 1
 #define CONFIG_EXAMPLE_USE_W5500 1
-
-static const char *TAG = "eth_example";
-
+#define CONFIG_EXAMPLE_ETH_SPI_CLOCK_MHZ 12
+#define CONFIG_EXAMPLE_ETH_SPI_HOST 1
 
 /** Event handler for Ethernet events */
 static void eth_event_handler(void *arg, esp_event_base_t event_base,
@@ -38,18 +38,18 @@ static void eth_event_handler(void *arg, esp_event_base_t event_base,
     {
     case ETHERNET_EVENT_CONNECTED:
         esp_eth_ioctl(eth_handle, ETH_CMD_G_MAC_ADDR, mac_addr);
-        ESP_LOGI(TAG, "Ethernet Link Up");
-        ESP_LOGI(TAG, "Ethernet HW Addr %02x:%02x:%02x:%02x:%02x:%02x",
+        printf("Ethernet Link Up\n");
+        printf("Ethernet HW Addr %02x:%02x:%02x:%02x:%02x:%02x\n",
                  mac_addr[0], mac_addr[1], mac_addr[2], mac_addr[3], mac_addr[4], mac_addr[5]);
         break;
     case ETHERNET_EVENT_DISCONNECTED:
-        ESP_LOGI(TAG, "Ethernet Link Down");
+        printf("Ethernet Link Down\n");
         break;
     case ETHERNET_EVENT_START:
-        ESP_LOGI(TAG, "Ethernet Started");
+        printf("Ethernet Started\n");
         break;
     case ETHERNET_EVENT_STOP:
-        ESP_LOGI(TAG, "Ethernet Stopped");
+        printf("Ethernet Stopped\n");
         break;
     default:
         break;
@@ -63,16 +63,17 @@ static void got_ip_event_handler(void *arg, esp_event_base_t event_base,
     ip_event_got_ip_t *event = (ip_event_got_ip_t *)event_data;
     const esp_netif_ip_info_t *ip_info = &event->ip_info;
 
-    ESP_LOGI(TAG, "Ethernet Got IP Address");
-    ESP_LOGI(TAG, "~~~~~~~~~~~");
-    ESP_LOGI(TAG, "ETHIP:" IPSTR, IP2STR(&ip_info->ip));
-    ESP_LOGI(TAG, "ETHMASK:" IPSTR, IP2STR(&ip_info->netmask));
-    ESP_LOGI(TAG, "ETHGW:" IPSTR, IP2STR(&ip_info->gw));
-    ESP_LOGI(TAG, "~~~~~~~~~~~");
+    printf("Ethernet Got Static IP Address\n");
+    printf("~~~~~~~~~~~\n");
+    printf("ETHIP:" IPSTR"\n", IP2STR(&ip_info->ip));
+    printf("ETHMASK:" IPSTR"\n", IP2STR(&ip_info->netmask));
+    printf("ETHGW:" IPSTR"\n", IP2STR(&ip_info->gw));
+    printf("~~~~~~~~~~~\n");
 }
 
 void app_main(void)
 {
+    printf("\nEthernet Static IP example start\n");
     // Initialize TCP/IP network interface (should be called only once in application)
     ESP_ERROR_CHECK(esp_netif_init());
     // Create default event loop that running in background
@@ -83,7 +84,7 @@ void app_main(void)
     esp_netif_config_t cfg_spi = {
         .base = &esp_netif_config,
         .stack = ESP_NETIF_NETSTACK_DEFAULT_ETH};
-    esp_netif_t *eth_netif_spi = {NULL}; // why not sizeof(esp_netif_t) ?
+    esp_netif_t *eth_netif_spi = {NULL};
     char if_key_str[10];
     char if_desc_str[10];
     char num_str[3];
@@ -136,6 +137,7 @@ void app_main(void)
     eth_w5500_config_t w5500_config = ETH_W5500_DEFAULT_CONFIG(spi_handle);
 
     // Set remaining GPIO numbers and configuration used by the SPI module
+    // Matrix-310 has no interrupt gpio pin
     // w5500_config.int_gpio_num = LAN_INT;
     phy_config_spi.phy_addr = LAN_PHY_ADDR;
     phy_config_spi.reset_gpio_num = LAN_PHY_RST;
@@ -150,7 +152,7 @@ void app_main(void)
     /* The SPI Ethernet module might not have a burned factory MAC address, we cat to set it manually.
    02:00:00 is a Locally Administered OUI range so should not be used except when testing on a LAN under your control.
     */
-    ESP_ERROR_CHECK(esp_eth_ioctl(eth_handle_spi, ETH_CMD_S_MAC_ADDR, (uint8_t[]){0x02, 0x00, 0x00, 0x12, 0x34, 0x56 + 0}));
+    ESP_ERROR_CHECK(esp_eth_ioctl(eth_handle_spi, ETH_CMD_S_MAC_ADDR, (uint8_t[]){0x02, 0x00, 0x00, 0x12, 0x34, 0x56 + CONFIG_EXAMPLE_ETH_SPI_HOST - 1}));
 
     // attach Ethernet driver to TCP/IP stack
     ESP_ERROR_CHECK(esp_netif_attach(eth_netif_spi, esp_eth_new_netif_glue(eth_handle_spi)));
