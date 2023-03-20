@@ -27,14 +27,14 @@ int readRotarySwitch(){
 }
 
 static void configure_rotary_switch(void){
-    printf("%sconfigured rotary switch!\r\n", TAG);
-    gpio_reset_pin(SW_1);
+    printf("\n%sconfigured rotary switch!\n", TAG);
+    gpio_reset_pin(SW_1); // SW_1: 34pin
     /* Set the GPIO as a push/pull input */
     gpio_set_direction(SW_1, GPIO_MODE_INPUT);
-    gpio_reset_pin(SW_2);
+    gpio_reset_pin(SW_2); //SW_2: 26pin
     /* Set the GPIO as a push/pull input */
     gpio_set_direction(SW_2, GPIO_MODE_INPUT);
-    gpio_reset_pin(SW_4);
+    gpio_reset_pin(SW_4); //SW_4: 35pin
     /* Set the GPIO as a push/pull input */
     gpio_set_direction(SW_4, GPIO_MODE_INPUT);
 }
@@ -45,6 +45,6 @@ void app_main(void)
 {
     /* Configure DIO */
     configure_rotary_switch();
-    printf("Rotary switch value is: %d\r\n", readRotarySwitch());
+    printf("Rotary switch value is: %d\n", readRotarySwitch());
 }
 

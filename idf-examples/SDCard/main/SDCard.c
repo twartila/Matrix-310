@@ -19,6 +19,7 @@
 
 void app_main(void)
 {
+    vTaskDelay(3000 / portTICK_PERIOD_MS);
     printf("\nSD card example:\n");
     esp_err_t ret;
 

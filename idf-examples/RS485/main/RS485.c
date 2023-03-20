@@ -18,6 +18,7 @@
 #include "esp_log.h"
 #include "sdkconfig.h"
 #include "./include/crc16.h"
+#include "./include/Artila-Matrix310.h"
 
 /**
  * This is a example which echos any data it receives on UART back to the sender using RS485 interface in half duplex mode.
@@ -26,23 +27,23 @@
 
 // Note: Some pins on target chip cannot be assigned for UART communication.
 // Please refer to documentation for selected board and target to configure pins using Kconfig.
-#define ECHO_TEST_TXD (CONFIG_ECHO_UART_TXD)
-#define ECHO_TEST_RXD (CONFIG_ECHO_UART_RXD)
+#define ECHO_TEST_TXD (COM1_TX)
+#define ECHO_TEST_RXD (COM1_RX)
 
 // RTS for RS485 Half-Duplex Mode manages DE/~RE
-#define ECHO_TEST_RTS (CONFIG_ECHO_UART_RTS)
+#define ECHO_TEST_RTS (COM1_RTS)
 
 // CTS is not used in RS485 Half-Duplex Mode
 #define ECHO_TEST_CTS (UART_PIN_NO_CHANGE)
 
 #define BUF_SIZE (127)
-#define BAUD_RATE (CONFIG_ECHO_UART_BAUD_RATE)
+#define BAUD_RATE (9600)
 
 // Read packet timeout
 #define PACKET_READ_TICS (100 / portTICK_RATE_MS)
 #define ECHO_TASK_STACK_SIZE (2048)
 #define ECHO_TASK_PRIO (10)
-#define ECHO_UART_PORT (CONFIG_ECHO_UART_PORT_NUM)
+#define ECHO_UART_PORT 2 // UART1 or UART2
 
 // Timeout threshold for UART = number of symbols (~10 tics) with unchanged state on receive pin
 #define ECHO_READ_TOUT (3) // 3.5T * 8 = 28 ticks, TOUT=3 -> ~24..33 ticks
@@ -51,7 +52,7 @@ static void echo_send(const int port, const char *str, uint8_t length)
 {
     if (uart_write_bytes(port, str, length) != length)
     {
-        ESP_LOGE(TAG, "Send data critical failure.");
+        printf("Send data critical failure.");
         // add your code to handle sending failure here
         abort();
     }
@@ -76,9 +77,9 @@ static void echo_task(void *arg)
     };
 
     // Set UART log level
-    esp_log_level_set(TAG, ESP_LOG_INFO);
+    // esp_log_level_set(TAG, ESP_LOG_INFO);
 
-    ESP_LOGI(TAG, "Start RS485 application test and configure UART.");
+    printf("Start RS485 application test and configure UART.\n");
 
     // Install UART driver (we don't need an event queue here)
     // In this example we don't even use a buffer for sending data.
@@ -87,7 +88,7 @@ static void echo_task(void *arg)
     // Configure UART parameters
     ESP_ERROR_CHECK(uart_param_config(uart_num, &uart_config));
 
-    ESP_LOGI(TAG, "UART set pins, mode and install driver.");
+    printf("UART set pins, mode and install driver.\n");
 
     // Set UART pins as per KConfig settings
     ESP_ERROR_CHECK(uart_set_pin(uart_num, ECHO_TEST_TXD, ECHO_TEST_RXD, ECHO_TEST_RTS, ECHO_TEST_CTS));
@@ -103,16 +104,17 @@ static void echo_task(void *arg)
     uint8_t writeModbus[] = {0x02, 0x03, 0x00, 0x44, 0x00, 0x03, 0x00, 0x00};
     // Generate CRC with Little Endian
     unsigned short crc = do_crc(&writeModbus[0], sizeof(writeModbus) - 2);
-    ESP_LOGI(TAG, "UART start recieve loop.\r\n");
+    printf("UART start recieve loop.\n");
     printf("Start RS485 UART test\n");
+    // print in Big Endian
     printf("CRC: 0x%.2X\n", swap_uint16(crc));
-    // Assigned CRC to the last two byte with Littte Endian
+    // Assigned CRC to the last two byte using Littte Endian
     *(u_int16_t *)(&writeModbus[0] + (sizeof(writeModbus) - 2)) = crc;
     
     while (1)
     {
         // Write data to UART
-        ESP_LOGI(TAG, "Writed %u bytes:", sizeof(writeModbus));
+        printf("Writed %u bytes:\n", sizeof(writeModbus));
         printf("[ ");
         for (int i = 0; i < sizeof(writeModbus); i++)
         {
@@ -124,7 +126,7 @@ static void echo_task(void *arg)
         int len = uart_read_bytes(uart_num, data, BUF_SIZE, PACKET_READ_TICS);
         if (len > 0)
         {
-            ESP_LOGI(TAG, "Received %u bytes:", len);
+            printf("Received %u bytes\n:", len);
             printf("[ ");
             for (int i = 0; i < len; i++)
             {
@@ -144,6 +146,8 @@ static void echo_task(void *arg)
 
 void app_main(void)
 {
+    vTaskDelay(3000 / portTICK_PERIOD_MS);
+    printf("\nRS485 example:\n");
     // A uart read/write example without event queue;
     xTaskCreate(echo_task, "uart_echo_task", ECHO_TASK_STACK_SIZE, NULL, ECHO_TASK_PRIO, NULL);
 }

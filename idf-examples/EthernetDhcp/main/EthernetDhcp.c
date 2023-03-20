@@ -73,7 +73,7 @@ static void got_ip_event_handler(void *arg, esp_event_base_t event_base,
 
 void app_main(void)
 {
-    printf("\nEthernet DHCP example start\n");
+    printf("\nEthernet DHCP example:\n");
     // Initialize TCP/IP network interface (should be called only once in application)
     ESP_ERROR_CHECK(esp_netif_init());
     // Create default event loop that running in background
