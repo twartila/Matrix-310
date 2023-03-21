@@ -36,7 +36,6 @@
 #define ECHO_UART_PORT_NUM      1
 #define ECHO_UART_BAUD_RATE     9600
 #define ECHO_TASK_STACK_SIZE    2048
-static const char *TAG = "RS232 example";
 
 #define BUF_SIZE (1024)
 
@@ -75,6 +74,7 @@ static void echo_task(void *arg)
 
 void app_main(void)
 {
-    printf("%s\n", TAG);
+    vTaskDelay(3000 / portTICK_PERIOD_MS);
+    printf("\nRS232 example:\n");
     xTaskCreate(echo_task, "uart_echo_task", ECHO_TASK_STACK_SIZE, NULL, 10, NULL);
 }

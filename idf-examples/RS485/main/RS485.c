@@ -23,7 +23,6 @@
 /**
  * This is a example which echos any data it receives on UART back to the sender using RS485 interface in half duplex mode.
  */
-#define TAG "RS485_ECHO_APP"
 
 // Note: Some pins on target chip cannot be assigned for UART communication.
 // Please refer to documentation for selected board and target to configure pins using Kconfig.
@@ -75,9 +74,6 @@ static void echo_task(void *arg)
         .rx_flow_ctrl_thresh = 122,
         .source_clk = UART_SCLK_APB,
     };
-
-    // Set UART log level
-    // esp_log_level_set(TAG, ESP_LOG_INFO);
 
     printf("Start RS485 application test and configure UART.\n");
 

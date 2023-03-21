@@ -8,7 +8,6 @@
 #define DI_PIN_SEL ((1ULL<<DI1) | (1ULL<<DI2))
 #define DO_PIN_SEL (1ULL<<DO1)
 #define DELAY_TIME 2000
-static const char *TAG = "DIO example: ";
 static uint8_t state = 0;
 /*
 DO1: pin25
@@ -23,7 +22,7 @@ static void setDO(void)
 
 static void configure_dio(void)
 {
-    printf("\n%s\nConfigured DIO!\n", TAG);
+    printf("Configured DIO!\n");
     gpio_config_t io_conf;
     io_conf.intr_type = GPIO_INTR_DISABLE;
     io_conf.mode = GPIO_MODE_OUTPUT;
@@ -58,6 +57,8 @@ static void configure_dio_simply(void){
 
 void app_main(void)
 {
+    vTaskDelay(3000 / portTICK_PERIOD_MS);
+    printf("\nDIO example:\n");
     static uint8_t DI1_state = 0;
     static uint8_t DI2_state = 0;
     /* Configure DI/DO

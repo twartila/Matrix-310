@@ -25,7 +25,7 @@ static void blink_led(void)
 
 static void configure_led(void)
 {
-    printf("\n%sConfigured to blink GPIO readyLED!\n", TAG);
+    printf("Configured to blink GPIO readyLED!\n");
     //LED_READY: pin27
     gpio_reset_pin(LED_READY);
     /* Set the GPIO as a push/pull output */
@@ -34,11 +34,12 @@ static void configure_led(void)
 
 void app_main(void)
 {
-
+    vTaskDelay(3000 / portTICK_PERIOD_MS);
+    printf("\nReadyLED blink example:\n");
     /* Configure the peripheral according to the LED type */
     configure_led();
     while (1) {
-        printf("%sTurning the LED %s!\n",TAG, s_led_state == true ? "ON" : "OFF");
+        printf("Turning the LED %s!\n", s_led_state == true ? "ON" : "OFF");
         blink_led();
         /* Toggle the LED state */
         s_led_state = !s_led_state;
