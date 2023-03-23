@@ -32,7 +32,8 @@ void loop() {
     Serial1.flush();
     readLen = readStr.length();
     Serial.printf("data receive: %i\n", readLen);
-    Serial.printf("read: %s\n", readStr);
+    Serial.print("read: ");
+    Serial.println(readStr);
   } 
   else {
     Serial.println("read nothing!");
