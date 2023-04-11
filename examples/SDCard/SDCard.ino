@@ -15,7 +15,7 @@ testFileIO
 
 //The SD library allows for reading from and writing to SD cards, the library also include "FS.h" and "SPI.h".
 #include <SD.h>
-#include "src/Artila-Matrix310.h"
+#include "./include/Artila-Matrix310.h"
 //HSPI, SPI bus mapped to pins 12 - 15
 SPIClass spi = SPIClass();
 

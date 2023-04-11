@@ -3,8 +3,9 @@ Used for communication between the Matrix310 and a computer or other devices.
 Matrix310 can use SERIAL1 PINS or SERIAL2 PINS to achieve RS232 communication.
 */
 
-#include "src/Artila-Matrix310.h"
-#include "src/crc16.h"
+#include "./include/Artila-Matrix310.h"
+#include "./include/crc16.h"
+// You may change the writeMsg according to your device setting.
 u_int8_t writeMsg[] = { 0x02, 0x03, 0x00, 0x44, 0x00, 0x03, 0x00, 0x00 };
 u_int8_t readBuf[11];
 int readLen = 0;

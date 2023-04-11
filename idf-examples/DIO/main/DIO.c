@@ -1,4 +1,7 @@
-//https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/gpio.html#_CPPv416gpio_config_t
+/*
+    GPIO & RTC GPIO: 
+    https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/gpio.html#_CPPv416gpio_config_t
+*/ 
 #include <stdio.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -62,7 +65,7 @@ void app_main(void)
     static uint8_t DI1_state = 0;
     static uint8_t DI2_state = 0;
     /* Configure DI/DO
-    Both methods can work*/
+    Both setting methods can work*/
     configure_dio(); // detailed settings
     // configure_dio_simply(); // simple setting
     while (1) {

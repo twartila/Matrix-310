@@ -6,7 +6,7 @@ DO1->pin 25
 DI1->pin 35
 DI2->pin 39
 */
-#include "src/Artila-Matrix310.h"
+#include "./include/Artila-Matrix310.h"
 
 int di1_status = 0;
 int di2_status = 0;

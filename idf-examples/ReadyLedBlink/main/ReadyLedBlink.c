@@ -1,11 +1,3 @@
-/* Blink Example
-
-   This example code is in the Public Domain (or CC0 licensed, at your option.)
-
-   Unless required by applicable law or agreed to in writing, this
-   software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-   CONDITIONS OF ANY KIND, either express or implied.
-*/
 #include <stdio.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -13,8 +5,6 @@
 #include "include/Artila-Matrix310.h"
 
 #define CONFIG_BLINK_PERIOD 2000
-static const char *TAG = "ReadyLED blink example: ";
-
 static uint8_t s_led_state = 0;
 
 static void blink_led(void)

@@ -3,7 +3,7 @@ Using Ethernet.begin(mac, ip) with the proper network setup, the Ethernet shield
 https://www.arduino.cc/reference/en/libraries/ethernet/
 */
 #include <Ethernet.h>
-#include "./src/Artila-Matrix310.h"
+#include "./include/Artila-Matrix310.h"
 
 // The MAC (Media access control) address for the device (array of 6 bytes). 
 // This is the Ethernet hardware address which is written on a sticker under your Matrix310.

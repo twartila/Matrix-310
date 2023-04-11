@@ -4,7 +4,7 @@ Matrix-310 can use SERIAL1 PINS or SERIAL2 PINS to achieve RS232 communication.
 Our example use RS232 with null modem to simulate the multi device communication.
 */
 
-#include "./src/Artila-Matrix310.h"
+#include "./include/Artila-Matrix310.h"
 int readLen = 0;
 String writeMsg = "Message";
 String readStr = "";

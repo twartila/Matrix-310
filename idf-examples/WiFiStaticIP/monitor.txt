@@ -1,0 +1,6 @@
+WiFi Static IP example:
+ESP_WIFI_MODE_STA
+wifi_init_sta finished.
+Success to set static ip: 192.168.1.123, netmask: 255.255.255.0, gw: 192.168.1.1
+static ip:192.168.1.123
+connected to ap SSID:mywifissid password:mywifipassword

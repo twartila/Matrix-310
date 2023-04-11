@@ -10,9 +10,8 @@ number  SW-4 SW-2 SW-1
 5       0    1    0
 6       0    0    1
 7       0    0    0
-
 */
-#include "src/Artila-Matrix310.h"
+#include "./include/Artila-Matrix310.h"
 
 int readRotarySwitch(){
     int total=0;

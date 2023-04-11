@@ -1,11 +1,4 @@
-/* WiFi station Example
-
-   This example code is in the Public Domain (or CC0 licensed, at your option.)
-
-   Unless required by applicable law or agreed to in writing, this
-   software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-   CONDITIONS OF ANY KIND, either express or implied.
-*/
+/* WiFi station Example */
 #include <string.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -13,19 +6,15 @@
 #include "esp_system.h"
 #include "esp_wifi.h"
 #include "esp_event.h"
-#include "esp_log.h"
 #include "nvs_flash.h"
-
 #include "lwip/err.h"
 #include "lwip/sys.h"
 
-/* The examples use WiFi configuration that you can set via project configuration menu
-
-   If you'd rather not, just change the below entries to strings with
-   the config you want - ie #define EXAMPLE_WIFI_SSID "mywifissid"
+/* Just change the below entries to strings with
+   the config you want - ie #define EXAMPLE_ESP_WIFI_SSID "mywifissid"
 */
-#define EXAMPLE_ESP_WIFI_SSID      "Artila"
-#define EXAMPLE_ESP_WIFI_PASS      "CF25B34315"
+#define EXAMPLE_ESP_WIFI_SSID      "mywifissid"
+#define EXAMPLE_ESP_WIFI_PASS      "mywifipassword"
 #define EXAMPLE_ESP_MAXIMUM_RETRY  2
 
 /* FreeRTOS event group to signal when we are connected*/
@@ -37,10 +26,7 @@ static EventGroupHandle_t s_wifi_event_group;
 #define WIFI_CONNECTED_BIT BIT0
 #define WIFI_FAIL_BIT      BIT1
 
-static const char *TAG = "wifi station";
-
 static int s_retry_num = 0;
-
 
 static void event_handler(void* arg, esp_event_base_t event_base,
                                 int32_t event_id, void* event_data)
@@ -55,7 +41,7 @@ static void event_handler(void* arg, esp_event_base_t event_base,
         } else {
             xEventGroupSetBits(s_wifi_event_group, WIFI_FAIL_BIT);
         }
-        ESP_LOGI(TAG,"connect to the AP fail");
+        printf("connect to the AP fail\n");
     } else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP) {
         ip_event_got_ip_t* event = (ip_event_got_ip_t*) event_data;
         printf("got ip:" IPSTR"\n", IP2STR(&event->ip_info.ip));
@@ -118,7 +104,7 @@ void wifi_init_sta(void)
         printf("Failed to connect to SSID:%s, password:%s\n",
                  EXAMPLE_ESP_WIFI_SSID, EXAMPLE_ESP_WIFI_PASS);
     } else {
-        ESP_LOGE(TAG, "UNEXPECTED EVENT");
+        printf("UNEXPECTED EVENT\n");
     }
 
     /* The event will not be processed after unregister */

@@ -1,12 +1,3 @@
-/* Ethernet Basic Example
-
-   This example code is in the Public Domain (or CC0 licensed, at your option.)
-
-   Unless required by applicable law or agreed to in writing, this
-   software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-   CONDITIONS OF ANY KIND, either express or implied.
-*/
-// #define CONFIG_ETH_SPI_ETHERNET_W5500 1
 #include <stdio.h>
 #include <string.h>
 #include "freertos/FreeRTOS.h"
@@ -14,7 +5,6 @@
 #include "esp_netif.h"
 #include "esp_eth.h"
 #include "esp_event.h"
-#include "esp_log.h"
 #include "driver/gpio.h"
 #include "sdkconfig.h"
 #include "lwip/ip_addr.h"
@@ -26,12 +16,12 @@
 #define CONFIG_EXAMPLE_ETH_SPI_CLOCK_MHZ 12
 #define CONFIG_EXAMPLE_ETH_SPI_HOST 1
 
-/** Event handler for Ethernet events */
+/* Event handler for Ethernet events */
 static void eth_event_handler(void *arg, esp_event_base_t event_base,
                               int32_t event_id, void *event_data)
 {
     uint8_t mac_addr[6] = {0};
-    /* we can get the ethernet driver handle from event data */
+    /* We can get the ethernet driver handle from event data */
     esp_eth_handle_t eth_handle = *(esp_eth_handle_t *)event_data;
 
     switch (event_id)
@@ -56,7 +46,7 @@ static void eth_event_handler(void *arg, esp_event_base_t event_base,
     }
 }
 
-/** Event handler for IP_EVENT_ETH_GOT_IP */
+/* Event handler for IP_EVENT_ETH_GOT_IP */
 static void got_ip_event_handler(void *arg, esp_event_base_t event_base,
                                  int32_t event_id, void *event_data)
 {
@@ -123,9 +113,10 @@ void app_main(void)
     esp_eth_handle_t eth_handle_spi = {NULL};
 
 #if CONFIG_EXAMPLE_USE_W5500
+    // This is a configuration for a SPI slave device that is connected to one of the SPI buses.
     spi_device_interface_config_t devcfg = {
-        .command_bits = 16, // Actually it's the address phase in W5500 SPI frame
-        .address_bits = 8,  // Actually it's the control phase in W5500 SPI frame
+        .command_bits = 16,
+        .address_bits = 8,
         .mode = 0,
         .clock_speed_hz = CONFIG_EXAMPLE_ETH_SPI_CLOCK_MHZ * 1000 * 1000,
         .queue_size = 20};
@@ -138,8 +129,6 @@ void app_main(void)
     eth_w5500_config_t w5500_config = ETH_W5500_DEFAULT_CONFIG(spi_handle);
 
     // Set remaining GPIO numbers and configuration used by the SPI module
-    // Matrix-310 has no interrupt gpio pin
-    // w5500_config.int_gpio_num = LAN_INT;
     phy_config_spi.phy_addr = LAN_PHY_ADDR;
     phy_config_spi.reset_gpio_num = LAN_PHY_RST;
 
@@ -151,11 +140,11 @@ void app_main(void)
     ESP_ERROR_CHECK(esp_eth_driver_install(&eth_config_spi, &eth_handle_spi));
 
     /* The SPI Ethernet module might not have a burned factory MAC address, we cat to set it manually.
-   02:00:00 is a Locally Administered OUI range so should not be used except when testing on a LAN under your control.
+       02:00:00 is a Locally Administered OUI range so should not be used except when testing on a LAN under your control.
     */
     ESP_ERROR_CHECK(esp_eth_ioctl(eth_handle_spi, ETH_CMD_S_MAC_ADDR, (uint8_t[]){0x02, 0x00, 0x00, 0x12, 0x34, 0x56 + CONFIG_EXAMPLE_ETH_SPI_HOST - 1}));
 
-    // attach Ethernet driver to TCP/IP stack
+    // Attach Ethernet driver to TCP/IP stack
     ESP_ERROR_CHECK(esp_netif_attach(eth_netif_spi, esp_eth_new_netif_glue(eth_handle_spi)));
 #endif // CONFIG_ETH_USE_SPI_ETHERNET
 
@@ -163,7 +152,7 @@ void app_main(void)
     ESP_ERROR_CHECK(esp_event_handler_register(ETH_EVENT, ESP_EVENT_ANY_ID, &eth_event_handler, NULL));
     ESP_ERROR_CHECK(esp_event_handler_register(IP_EVENT, IP_EVENT_ETH_GOT_IP, &got_ip_event_handler, NULL));
 
-    /* start Ethernet driver state machine */
+    /* Start Ethernet driver state machine */
 #if CONFIG_EXAMPLE_USE_SPI_ETHERNET
 
     ESP_ERROR_CHECK(esp_eth_start(eth_handle_spi));

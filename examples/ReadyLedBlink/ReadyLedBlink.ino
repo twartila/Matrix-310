@@ -1,4 +1,4 @@
-#include"./src/Artila-Matrix310.h"
+#include"./include/Artila-Matrix310.h"
 void setup() {
   // initialize digital pin LED_BUILTIN as an output.
   pinMode(LED_READY, OUTPUT); // pin 27

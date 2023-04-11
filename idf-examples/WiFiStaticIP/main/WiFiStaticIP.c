@@ -1,11 +1,4 @@
-/* Static IP Example
-
-   This example code is in the Public Domain (or CC0 licensed, at your option.)
-
-   Unless required by applicable law or agreed to in writing, this
-   software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-   CONDITIONS OF ANY KIND, either express or implied.
-*/
+/* Static IP Example */
 #include <string.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -13,16 +6,15 @@
 #include "esp_system.h"
 #include "esp_wifi.h"
 #include "esp_event.h"
-#include "esp_log.h"
 #include <netdb.h>
 #include "nvs_flash.h"
 
 /* just change the below entries to strings with
    the config you want - ie #define EXAMPLE_WIFI_SSID "mywifissid"
 */
-#define EXAMPLE_WIFI_SSID             "Artila"
-#define EXAMPLE_WIFI_PASS             "CF25B34315"
-#define EXAMPLE_MAXIMUM_RETRY         5
+#define EXAMPLE_WIFI_SSID             "mywifissid"
+#define EXAMPLE_WIFI_PASS             "mywifipassword"
+#define EXAMPLE_MAXIMUM_RETRY         2
 #define EXAMPLE_STATIC_IP_ADDR        "192.168.1.123"
 #define EXAMPLE_STATIC_NETMASK_ADDR   "255.255.255.0"
 #define EXAMPLE_STATIC_GW_ADDR        "192.168.1.1"
@@ -38,8 +30,6 @@ static EventGroupHandle_t s_wifi_event_group;
  * - we failed to connect after the maximum amount of retries */
 #define WIFI_CONNECTED_BIT BIT0
 #define WIFI_FAIL_BIT      BIT1
-
-static const char *TAG = "static_ip";
 
 static int s_retry_num = 0;
 
@@ -69,7 +59,7 @@ static void example_set_static_ip(esp_netif_t *netif)
         printf("Failed to set ip info\n");
         return;
     }
-    ESP_LOGD(TAG, "Success to set static ip: %s, netmask: %s, gw: %s", EXAMPLE_STATIC_IP_ADDR, EXAMPLE_STATIC_NETMASK_ADDR, EXAMPLE_STATIC_GW_ADDR);
+    printf("Success to set static ip: %s, netmask: %s, gw: %s\n", EXAMPLE_STATIC_IP_ADDR, EXAMPLE_STATIC_NETMASK_ADDR, EXAMPLE_STATIC_GW_ADDR);
     ESP_ERROR_CHECK(example_set_dns_server(netif, ipaddr_addr(EXAMPLE_MAIN_DNS_SERVER), ESP_NETIF_DNS_MAIN));
     ESP_ERROR_CHECK(example_set_dns_server(netif, ipaddr_addr(EXAMPLE_BACKUP_DNS_SERVER), ESP_NETIF_DNS_BACKUP));
 }
@@ -89,7 +79,7 @@ static void event_handler(void* arg, esp_event_base_t event_base,
         } else {
             xEventGroupSetBits(s_wifi_event_group, WIFI_FAIL_BIT);
         }
-        ESP_LOGI(TAG,"connect to the AP fail");
+        printf("connect to the AP fail\n");
     } else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP) {
         ip_event_got_ip_t* event = (ip_event_got_ip_t*) event_data;
         printf("static ip:" IPSTR"\n", IP2STR(&event->ip_info.ip));

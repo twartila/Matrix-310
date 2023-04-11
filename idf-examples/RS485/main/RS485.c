@@ -1,11 +1,3 @@
-/* Uart Events Example
-
-   This example code is in the Public Domain (or CC0 licensed, at your option.)
-
-   Unless required by applicable law or agreed to in writing, this
-   software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-   CONDITIONS OF ANY KIND, either express or implied.
-*/
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -15,17 +7,11 @@
 #include "nvs_flash.h"
 #include "driver/uart.h"
 #include "freertos/queue.h"
-#include "esp_log.h"
-#include "sdkconfig.h"
-#include "./include/crc16.h"
-#include "./include/Artila-Matrix310.h"
-
-/**
- * This is a example which echos any data it receives on UART back to the sender using RS485 interface in half duplex mode.
- */
-
-// Note: Some pins on target chip cannot be assigned for UART communication.
-// Please refer to documentation for selected board and target to configure pins using Kconfig.
+#include "include/crc16.h"
+#include "include/Artila-Matrix310.h"
+/*
+   This is a example which echos any data it receives on UART back to the sender using RS485 interface in half duplex mode.
+*/
 #define ECHO_TEST_TXD (COM1_TX)
 #define ECHO_TEST_RXD (COM1_RX)
 
@@ -42,7 +28,7 @@
 #define PACKET_READ_TICS (100 / portTICK_RATE_MS)
 #define ECHO_TASK_STACK_SIZE (2048)
 #define ECHO_TASK_PRIO (10)
-#define ECHO_UART_PORT 2 // UART1 or UART2
+#define ECHO_UART_PORT 2 // You may use UART1 or UART2
 
 // Timeout threshold for UART = number of symbols (~10 tics) with unchanged state on receive pin
 #define ECHO_READ_TOUT (3) // 3.5T * 8 = 28 ticks, TOUT=3 -> ~24..33 ticks
@@ -86,7 +72,7 @@ static void echo_task(void *arg)
 
     printf("UART set pins, mode and install driver.\n");
 
-    // Set UART pins as per KConfig settings
+    // Set UART pins
     ESP_ERROR_CHECK(uart_set_pin(uart_num, ECHO_TEST_TXD, ECHO_TEST_RXD, ECHO_TEST_RTS, ECHO_TEST_CTS));
 
     // Set RS485 half duplex mode
@@ -97,14 +83,15 @@ static void echo_task(void *arg)
 
     // Allocate buffers for UART
     uint8_t *data = (uint8_t *)malloc(sizeof(uint8_t) * BUF_SIZE);
+    // You may change the writeMsg according to your device setting.
     uint8_t writeModbus[] = {0x02, 0x03, 0x00, 0x44, 0x00, 0x03, 0x00, 0x00};
-    // Generate CRC with Little Endian
+    // Generate CRC in Little Endian
     unsigned short crc = do_crc(&writeModbus[0], sizeof(writeModbus) - 2);
     printf("UART start recieve loop.\n");
     printf("Start RS485 UART test\n");
-    // print in Big Endian
+    // Print CRC in Big Endian
     printf("CRC: 0x%.2X\n", swap_uint16(crc));
-    // Assigned CRC to the last two byte using Littte Endian
+    // Assign CRC to the last two bytes in Little Endian
     *(u_int16_t *)(&writeModbus[0] + (sizeof(writeModbus) - 2)) = crc;
     
     while (1)

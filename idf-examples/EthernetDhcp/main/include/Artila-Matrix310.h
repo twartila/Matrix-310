@@ -15,7 +15,6 @@
 #define LAN_MOSI    23
 #define LAN_CS      5
 #define LAN_RST     22
-#define LAN_INT     4 //可不設
 #define LAN_PHY_RST -1
 #define LAN_PHY_ADDR 1
 

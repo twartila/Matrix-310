@@ -1,11 +1,5 @@
 /* SD card and FAT filesystem example.
    This example uses SPI peripheral to communicate with SD card.
-
-   This example code is in the Public Domain (or CC0 licensed, at your option.)
-
-   Unless required by applicable law or agreed to in writing, this
-   software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-   CONDITIONS OF ANY KIND, either express or implied.
 */
 
 #include <string.h>
@@ -23,9 +17,9 @@ void app_main(void)
     printf("\nSD card example:\n");
     esp_err_t ret;
 
-    // Options for mounting the filesystem.
-    // If format_if_mount_failed is set to true, SD card will be partitioned and
-    // formatted in case when mounting fails.
+    /* Options for mounting the filesystem.
+       If format_if_mount_failed is set to true, SD card will be partitioned and
+       formatted in case when mounting fails. */
     esp_vfs_fat_sdmmc_mount_config_t mount_config = {
         .format_if_mount_failed = false,
         .max_files = 5,
@@ -35,10 +29,10 @@ void app_main(void)
     const char mount_point[] = MOUNT_POINT;
     printf("Initializing SD card\n");
 
-    // Use settings defined above to initialize SD card and mount FAT filesystem.
-    // Note: esp_vfs_fat_sdmmc/sdspi_mount is all-in-one convenience functions.
-    // Please check its source code and implement error recovery when developing
-    // production applications.
+    /* Use settings defined above to initialize SD card and mount FAT filesystem.
+       Note: esp_vfs_fat_sdmmc/sdspi_mount is all-in-one convenience functions.
+       Please check its source code and implement error recovery when developing
+       production applications. */
     printf("Using SPI peripheral\n");
 
     // LED_READY: pin27
@@ -145,6 +139,6 @@ void app_main(void)
     esp_vfs_fat_sdcard_unmount(mount_point, card);
     printf("Card unmounted\n");
 
-    //deinitialize the bus after all devices are removed
+    // Deinitialize the bus after all devices are removed
     spi_bus_free(host.slot);
 }
