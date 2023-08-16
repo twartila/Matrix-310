@@ -1,3 +1,5 @@
 # Matrix-310  
-  - [Arduino examples](examples)
-  - [ESP-IDF examples](idf-examples)
+### Development Status
+Latest Stable Release v1.0.1
+### [Arduino examples](examples)
+### [ESP-IDF examples](idf-examples)
