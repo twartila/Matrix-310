@@ -39,11 +39,9 @@ const unsigned int crc_table[256] = {
 unsigned short do_crc_table(unsigned char *ptr, int len)
 {
     unsigned short crc = 0xFFFF;
-    
     while(len--) 
     {
         crc = (crc >> 8) ^ crc_table[(crc ^ *ptr++) & 0xff];
     }
-    
     return (crc);
 }

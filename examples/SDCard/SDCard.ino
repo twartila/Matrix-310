@@ -1,5 +1,9 @@
 /*
-https://github.com/espressif/arduino-esp32/blob/master/libraries/SD/examples/SD_Test/SD_Test.
+Once an SD memory card is connected to the SPI interface of the Matrix310 you can create files and read/write on them.
+You can also move through directories on the SD card.
+
+source:
+https://github.com/espressif/arduino-esp32/blob/master/libraries/SD/examples/SD_Test/SD_Test.ino
 
 listDir
 createDir
@@ -13,7 +17,7 @@ deleteFile
 testFileIO
 */
 
-//The SD library allows for reading from and writing to SD cards, the library also include "FS.h" and "SPI.h".
+// The SD library allows for reading from and writing to SD cards, the library also include "FS.h" and "SPI.h".
 #include <SD.h>
 #include "./include/Artila-Matrix310.h"
 //HSPI, SPI bus mapped to pins 12 - 15

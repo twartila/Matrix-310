@@ -1,3 +1,7 @@
+/*
+Using WIFI_STA to connect the WiFi.
+Source: https://randomnerdtutorials.com/esp32-useful-wi-fi-functions-arduino/
+*/
 #include <WiFi.h>
 
 const char* ssid     = "WiFi-ssid";

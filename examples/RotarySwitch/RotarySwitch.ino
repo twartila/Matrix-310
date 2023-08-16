@@ -1,4 +1,5 @@
 /*
+Read rotary switch value.
 Rotary Switch Truth Table:
 
 number  SW-4 SW-2 SW-1

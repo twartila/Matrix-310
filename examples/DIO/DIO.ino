@@ -1,5 +1,6 @@
 /*
 Use digitalRead() to read the value from a specified digital pin, either HIGH or LOW.
+Source: https://www.arduino.cc/reference/en/language/functions/digital-io/digitalread/
 
 DIO pin define:
 DO1->pin 25

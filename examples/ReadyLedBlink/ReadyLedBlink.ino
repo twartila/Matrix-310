@@ -1,3 +1,6 @@
+/*
+Turn an LED on and off. 
+*/
 #include"./include/Artila-Matrix310.h"
 void setup() {
   // initialize digital pin LED_BUILTIN as an output.

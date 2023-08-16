@@ -1,2 +1,0 @@
-Set up RS485.
-source: https://www.arduino.cc/reference/en/language/functions/communication/serial/ 
